@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assign Leads</title>
+  <link rel="stylesheet" href="../css/manager.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h2>Assign Leads</h2>
+  <a href="dashboard.html" style="color:white">← Back</a>
+</header>
+
+<div class="form-box">
+  <input type="text" id="leadName" placeholder="Lead Name">
+  <input type="text" id="leadPhone" placeholder="Phone Number">
+
+  <select id="salespersonSelect"></select>
+
+  <button onclick="assignLead()">Assign Lead</button>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/manager/assignLeads.js"></script>
+</body>
+</html>

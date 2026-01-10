@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Agents | SalesMS</title>
+
+  <link rel="stylesheet" href="agents.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <h2 class="brand">SalesMS</h2>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="agents.html" class="active">Agents</a>
+    <a href="insight-calls.html">Call Insights</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="settings.html">Settings</a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <header class="topbar">
+    <h1>Agents Performance</h1>
+    <button class="logout" onclick="logout()">Logout</button>
+  </header>
+
+  <section class="employee-section">
+    <h3>Team Overview</h3>
+    <div id="employeeCards" class="cards"></div>
+  </section>
+
+</main>
+
+<!-- ============ MODAL (DRILL DOWN) ============ -->
+<div id="agentModal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">✖</span>
+
+    <h2 id="agentTitle"></h2>
+
+    <div class="charts">
+      <canvas id="scoreTrendChart"></canvas>
+      <canvas id="durationTrendChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="../js/manager/teamView.js"></script>
+
+<script>
+function logout() {
+  localStorage.clear();
+  window.location.href = "/";
+}
+</script>
+
+</body>
+</html>

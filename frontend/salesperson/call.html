@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Call Tracking | SalesMS</title>
+
+  <!-- ✅ SIDEBAR CSS (FIXED) -->
+  <style>
+    .sidebar {
+      width: 240px;
+      background: #111827;
+      padding: 20px;
+      box-shadow: 2px 0 15px rgba(0,0,0,0.4);
+    }
+
+    .logo {
+      color: #a78bfa;
+      margin-bottom: 30px;
+    }
+
+    .nav {
+      padding: 0;
+    }
+
+    .nav li {
+      list-style: none;
+      margin-bottom: 10px;
+    }
+
+    .nav li a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .nav li a:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: white;
+    }
+
+    .nav li.active a {
+      background: #6366f1;
+      color: white;
+    }
+  </style>
+
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="/css/call.css">
+
+  <!-- Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+
+  <!-- 🔐 Auth Guard -->
+  <script>
+    if (!localStorage.getItem("token")) {
+      window.location.href = "/";
+    }
+  </script>
+
+  <!-- JS -->
+  <script src="/js/salesperson/callTracker.js" defer></script>
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+  <h2 class="logo">SalesMS</h2>
+
+  <ul class="nav">
+    <li>
+      <a href="dashboard.html">
+        <i class="fa-solid fa-chart-line"></i>
+        Dashboard
+      </a>
+    </li>
+
+    <li class="active">
+      <a href="call.html">
+        <i class="fa-solid fa-phone"></i>
+        Calls
+      </a>
+    </li>
+
+    <li>
+      <a href="leads.html">
+        <i class="fa-solid fa-users"></i>
+        Leads
+      </a>
+    </li>
+
+    <li>
+      <a href="followups.html">
+        <i class="fa-solid fa-clipboard-check"></i>
+        Follow Ups
+      </a>
+    </li>
+
+    <li>
+      <a href="analytics.html">
+        <i class="fa-solid fa-gear"></i>
+        Analytics
+      </a>
+    </li>
+  </ul>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<main class="main">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div>
+      <h2>Call Tracking</h2>
+      <p class="subtitle">Initiate calls and manage conversations</p>
+    </div>
+
+    <button class="logout" onclick="logout()">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      Logout
+    </button>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Start a New Call</h1>
+    <p>
+      Click the button below to open the dialer and begin a call with a customer.
+    </p>
+  </section>
+
+  <!-- ================= CONTENT ================= -->
+  <section class="content">
+
+    <div class="cards">
+
+      <div class="card">
+        <h3>
+          <i class="fa-solid fa-user"></i>
+          Lead Information
+        </h3>
+
+        <p>
+          <strong>Customer:</strong>
+          <span id="customerName">John Doe</span>
+        </p>
+
+        <p>
+          <strong>Phone:</strong>
+          <span id="customerPhone">+91XXXXXXXXXX</span>
+        </p>
+      </div>
+
+      <div class="card center">
+        <h3>
+          <i class="fa-solid fa-phone-volume"></i>
+          Call Action
+        </h3>
+
+        <button class="btn-primary call-now-btn" onclick="goToDialer()">
+          <i class="fa-solid fa-phone"></i>
+          Call Now
+        </button>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ================= SCRIPTS ================= -->
+<script>
+  function logout() {
+    localStorage.clear();
+    window.location.href = "/";
+  }
+
+  function goToDialer() {
+    window.location.href = "/salesperson/dialer.html";
+  }
+</script>
+
+</body>
+</html>

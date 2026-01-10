@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Customer - Receive Call</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #333;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .btn-success {
+        background: #4caf50;
+        color: white;
+      }
+      .btn-danger {
+        background: #f44336;
+        color: white;
+      }
+      .status {
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 5px;
+        text-align: center;
+      }
+      .incoming-call {
+        background: #fff3cd;
+        color: #856404;
+        border: 2px solid #ffc107;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>📱 Customer Phone</h2>
+
+      <input
+        type="tel"
+        id="myPhone"
+        placeholder="Your phone number: +919876543210"
+      />
+      <button class="btn-success" onclick="register()">
+        Register to Receive Calls
+      </button>
+
+      <div id="incomingCall" style="display: none" class="status incoming-call">
+        <h3>📞 Incoming Call</h3>
+        <p>From: <span id="callerPhone"></span></p>
+        <button class="btn-success" onclick="answerCall()">Answer</button>
+        <button class="btn-danger" onclick="rejectCall()">Reject</button>
+      </div>
+
+      <div id="status" class="status" style="display: none"></div>
+
+      <button
+        id="hangupBtn"
+        class="btn-danger"
+        onclick="hangup()"
+        style="display: none"
+      >
+        Hang Up
+      </button>
+    </div>
+
+    <audio id="remoteAudio" autoplay></audio>
+    <audio id="localAudio" muted></audio>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      let socket;
+      let peerConnection;
+      let localStream;
+      let currentCallId;
+      let pendingOffer;
+
+      const config = {
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      };
+
+      function updateStatus(message) {
+        document.getElementById("status").textContent = message;
+        document.getElementById("status").style.display = "block";
+      }
+
+      function register() {
+        const myPhone = document.getElementById("myPhone").value;
+
+        if (!myPhone) {
+          alert("Please enter your phone number");
+          return;
+        }
+
+        socket = io("http://127.0.0.1:5000");
+
+        socket.on("connected", (data) => {
+          console.log("✅ Connected:", data.socketId);
+          socket.emit("register", {
+            phone: myPhone,
+            userType: "customer",
+          });
+        });
+
+        socket.on("registered", (data) => {
+          console.log("✅ Registered:", data);
+          updateStatus("Waiting for calls...");
+        });
+
+        // ✅ FIXED: Removed duplicate closing brace
+        socket.on("incoming_call", (data) => {
+          console.log("📞 Incoming call:", data);
+          currentCallId = data.callId;
+          pendingOffer = null;
+          document.getElementById("callerPhone").textContent = data.callerPhone;
+          document.getElementById("incomingCall").style.display = "block";
+        });
+
+        socket.on("webrtc_offer", async (data) => {
+          console.log("📥 Received offer");
+          pendingOffer = data.offer;
+        });
+
+        socket.on("webrtc_ice_candidate", async (data) => {
+          if (peerConnection && data.candidate) {
+            await peerConnection.addIceCandidate(
+              new RTCIceCandidate(data.candidate)
+            );
+          }
+        });
+
+        socket.on("call_ended", () => {
+          console.log("📞 Call ended");
+          cleanup();
+          updateStatus("Call ended");
+        });
+      }
+
+      async function answerCall() {
+        try {
+          document.getElementById("incomingCall").style.display = "none";
+          updateStatus("Connecting...");
+
+          // Get user media
+          localStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          document.getElementById("localAudio").srcObject = localStream;
+
+          // Create peer connection
+          peerConnection = new RTCPeerConnection(config);
+
+          // Add local stream
+          localStream.getTracks().forEach((track) => {
+            peerConnection.addTrack(track, localStream);
+          });
+
+          // Handle remote stream
+          peerConnection.ontrack = (event) => {
+            console.log("📥 Received remote stream");
+            document.getElementById("remoteAudio").srcObject = event.streams[0];
+          };
+
+          // Handle ICE candidates
+          peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+              socket.emit("webrtc_ice_candidate", {
+                callId: currentCallId,
+                candidate: event.candidate,
+              });
+            }
+          };
+
+          // Set remote description (offer)
+          await peerConnection.setRemoteDescription(
+            new RTCSessionDescription(pendingOffer)
+          );
+
+          // Create answer
+          const answer = await peerConnection.createAnswer();
+          await peerConnection.setLocalDescription(answer);
+
+          // Send answer
+          socket.emit("webrtc_answer", {
+            callId: currentCallId,
+            answer: answer,
+          });
+
+          updateStatus("Call connected!");
+          document.getElementById("hangupBtn").style.display = "block";
+        } catch (error) {
+          console.error("❌ Error:", error);
+          updateStatus("Failed to answer call");
+        }
+      }
+
+      function rejectCall() {
+        document.getElementById("incomingCall").style.display = "none";
+        socket.emit("end_call", { callId: currentCallId });
+        updateStatus("Call rejected");
+      }
+
+      function hangup() {
+        socket.emit("end_call", { callId: currentCallId });
+        cleanup();
+      }
+
+      function cleanup() {
+        if (peerConnection) {
+          peerConnection.close();
+          peerConnection = null;
+        }
+
+        if (localStream) {
+          localStream.getTracks().forEach((track) => track.stop());
+          localStream = null;
+        }
+
+        document.getElementById("hangupBtn").style.display = "none";
+        document.getElementById("incomingCall").style.display = "none";
+        updateStatus("Ready for next call");
+      }
+    </script>
+  </body>
+</html>

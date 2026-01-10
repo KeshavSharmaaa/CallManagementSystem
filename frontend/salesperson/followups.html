@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Follow Ups</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="followups.css">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2 class="logo">SalesMS</h2>
+
+        <ul class="nav">
+            <li>
+                <a href="dashboard.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="call.html">
+                    <i class="fa-solid fa-phone"></i>
+                    Calls
+                </a>
+            </li>
+
+            <li>
+                <a href="leads.html">
+                    <i class="fa-solid fa-users"></i>
+                    Leads
+                </a>
+            </li>
+
+            <li>
+                <a href="followups.html">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    Follow Ups
+                </a>
+            </li>
+
+            <li>
+                <a href="analytics.html">
+                    <i class="fa-solid fa-gear"></i>
+                    Analytics
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+
+    <!-- Main -->
+    <main class="main">
+
+        <header class="header">
+            <h1>Follow Ups</h1>
+        </header>
+
+        <!-- Summary Cards -->
+        <section class="cards">
+            <div class="card purple">
+                <i class="fa-solid fa-calendar-day"></i>
+                <p>Today's Follow-ups</p>
+                <h3>6</h3>
+            </div>
+
+            <div class="card red">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>Overdue</p>
+                <h3>3</h3>
+            </div>
+
+            <div class="card blue">
+                <i class="fa-solid fa-calendar-week"></i>
+                <p>Upcoming</p>
+                <h3>8</h3>
+            </div>
+
+            <div class="card green">
+                <i class="fa-solid fa-circle-check"></i>
+                <p>Completed</p>
+                <h3>21</h3>
+            </div>
+        </section>
+
+        <!-- Follow-up Table -->
+        <section class="table-section">
+            <h2>Follow-up List</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Phone</th>
+                        <th>Reason</th>
+                        <th>Follow-up Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Rahul Sharma</td>
+                        <td>9876543210</td>
+                        <td>Requested callback</td>
+                        <td>Today, 3:00 PM</td>
+                        <td class="status today">Today</td>
+                        <td>
+                            <button class="btn call"><i class="fa-solid fa-phone"></i></button>
+                            <button class="btn done"><i class="fa-solid fa-check"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Ananya Verma</td>
+                        <td>9123456789</td>
+                        <td>Busy earlier</td>
+                        <td>Yesterday</td>
+                        <td class="status overdue">Overdue</td>
+                        <td>
+                            <button class="btn call"><i class="fa-solid fa-phone"></i></button>
+                            <button class="btn reschedule"><i class="fa-solid fa-calendar-plus"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Karan Mehta</td>
+                        <td>9988776655</td>
+                        <td>Interested</td>
+                        <td>Tomorrow</td>
+                        <td class="status upcoming">Upcoming</td>
+                        <td>
+                            <button class="btn call"><i class="fa-solid fa-phone"></i></button>
+                            <button class="btn reschedule"><i class="fa-solid fa-calendar-plus"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>

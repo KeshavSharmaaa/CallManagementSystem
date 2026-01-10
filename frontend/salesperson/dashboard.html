@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Salesperson Dashboard</title>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="dashboard.css">
+
+    <!-- 🔐 AUTH GUARD -->
+    <script>
+        const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "/";
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2 class="logo">SalesMS</h2>
+
+        <ul class="nav">
+            <li>
+                <a href="dashboard.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="call.html">
+                    <i class="fa-solid fa-phone"></i>
+                    Calls
+                </a>
+            </li>
+
+            <li>
+                <a href="leads.html">
+                    <i class="fa-solid fa-users"></i>
+                    Leads
+                </a>
+            </li>
+
+            <li>
+                <a href="followups.html">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    Follow Ups
+                </a>
+            </li>
+
+            <li>
+                <a href="analytics.html">
+                    <i class="fa-solid fa-gear"></i>
+                    Analytics
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+        <header class="header">
+            <h1>Welcome, Salesperson 👋</h1>
+            <button class="logout" onclick="logout()">Logout</button>
+        </header>
+
+        <!-- Stat Cards -->
+        <section class="cards">
+            <div class="card purple">
+                <i class="fa-solid fa-bullseye"></i>
+                <h3>Target Calls</h3>
+                <p>120</p>
+            </div>
+
+            <div class="card green">
+                <i class="fa-solid fa-phone-volume"></i>
+                <h3>Calls Attended</h3>
+                <p>86</p>
+            </div>
+
+            <div class="card orange">
+                <i class="fa-solid fa-calendar-check"></i>
+                <h3>Follow Ups</h3>
+                <p>14</p>
+            </div>
+
+            <div class="card blue">
+                <i class="fa-solid fa-user-plus"></i>
+                <h3>Leads</h3>
+                <p>32</p>
+            </div>
+        </section>
+
+        <!-- Call Logs -->
+        <section class="table-section">
+            <h2>Recent Call Logs</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>3 min</td>
+                        <td class="success">Connected</td>
+                        <td>Today</td>
+                    </tr>
+                    <tr>
+                        <td>Sarah Lee</td>
+                        <td>1 min</td>
+                        <td class="warning">No Answer</td>
+                        <td>Today</td>
+                    </tr>
+                    <tr>
+                        <td>Michael Smith</td>
+                        <td>5 min</td>
+                        <td class="success">Connected</td>
+                        <td>Yesterday</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+</div>
+
+<!-- ✅ SCRIPT: Active Sidebar + Logout -->
+<script>
+    // ---------------- ACTIVE SIDEBAR ----------------
+    const links = document.querySelectorAll(".nav a");
+    const currentPage = window.location.pathname.split("/").pop();
+
+    links.forEach(link => {
+        if (link.getAttribute("href") === currentPage) {
+            link.parentElement.classList.add("active");
+        } else {
+            link.parentElement.classList.remove("active");
+        }
+    });
+
+    // ---------------- LOGOUT ----------------
+    function logout() {
+        // Clear auth data
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("user");
+
+        // Optional backend call
+        fetch("/api/auth/logout", { method: "POST" })
+            .finally(() => {
+                window.location.href = "/";
+            });
+    }
+</script>
+
+</body>
+</html>

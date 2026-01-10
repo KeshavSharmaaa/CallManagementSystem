@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manager Dashboard</title>
+
+  <!-- Dashboard Styles -->
+  <link rel="stylesheet" href="dashboard.css" />
+
+  <!-- Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <h2 class="brand">SalesMS</h2>
+
+    <nav id="sidebarNav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="agents.html">Agents</a>
+      <a href="insight-calls.html">Call Insights</a>
+      <a href="#">Analytics</a>
+      <a href="#">Settings</a>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <h1>Manager Dashboard</h1>
+      <button class="logout" onclick="logout()">Logout</button>
+    </header>
+
+    <!-- GRID -->
+    <section class="grid">
+
+      <!-- Call Volume -->
+      <div class="card">
+        <h3>Call Volume</h3>
+        <canvas id="callVolume"></canvas>
+      </div>
+
+      <!-- Avg Handle Time -->
+      <div class="card">
+        <h3>Avg. Handle Time</h3>
+        <canvas id="handleTime"></canvas>
+      </div>
+
+      <!-- Feature Card -->
+      <div class="feature">
+        <h2>Introduction Direct Call Feature</h2>
+        <p>Improve agent connection rate instantly.</p>
+      </div>
+
+      <!-- CSAT -->
+      <div class="card center">
+        <h3>CSAT</h3>
+        <div class="gauge">
+          <span>62%</span><br />
+          <small>Target: 86%</small>
+        </div>
+      </div>
+
+      <!-- Sentiment -->
+      <div class="card">
+        <h3>Sentiment Analysis</h3>
+        <canvas id="sentiment"></canvas>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="leaderboard">
+        <h3>Agent Leaderboard</h3>
+
+        <div class="agent">
+          <img src="assets/avatars/a1.png" />
+          <div>
+            <b>Alex Shotay</b><br />
+            <span>QA 86%</span>
+          </div>
+          <span class="rank">#1</span>
+        </div>
+
+        <div class="agent">
+          <img src="assets/avatars/a2.png" />
+          <div>
+            <b>Jim Sullivan</b><br />
+            <span>QA 80%</span>
+          </div>
+          <span class="rank">#2</span>
+        </div>
+
+        <div class="agent">
+          <img src="assets/avatars/a3.png" />
+          <div>
+            <b>Logan Turner</b><br />
+            <span>QA 79%</span>
+          </div>
+          <span class="rank">#3</span>
+        </div>
+      </div>
+
+      <!-- Performance Table -->
+      <div class="table-card">
+        <h3>Performance List</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Agent</th>
+              <th>Team</th>
+              <th>QA</th>
+              <th>Sentiment</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Alex Shotay</td>
+              <td>Sabertooth</td>
+              <td class="good">86%</td>
+              <td><span class="pill positive">Positive</span></td>
+              <td>Nov 08, 2024</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ================= LOGOUT ================= -->
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = "/";
+    }
+  </script>
+
+  <!-- ================= ACTIVE LINK HIGHLIGHT ================= -->
+  <script>
+    const links = document.querySelectorAll("#sidebarNav a");
+    const currentPage = window.location.pathname.split("/").pop();
+
+    links.forEach(link => {
+      if (link.getAttribute("href") === currentPage) {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
+    });
+  </script>
+
+  <!-- Dashboard Logic -->
+  <script src="dashboard.js"></script>
+
+</body>
+</html>

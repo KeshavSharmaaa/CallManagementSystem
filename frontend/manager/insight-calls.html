@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Call Insights | Manager</title>
+
+  <link rel="stylesheet" href="insight-calls.css" />
+
+  <script>
+    if (!localStorage.getItem("token")) {
+      window.location.href = "/";
+    }
+  </script>
+</head>
+
+<body>
+
+<aside class="sidebar">
+  <h2 class="brand">SalesMS</h2>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="insight-calls.html" class="active">Call Insights</a>
+    <a >Analytics</a>
+    <a >Settings</a>
+  </nav>
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+  <h1>📊 Call Insights</h1>
+  <button class="logout" onclick="logout()">Logout</button>
+</header>
+
+<section class="table-card">
+  <table id="insightsTable">
+    <thead>
+      <tr>
+        <th>Salesperson</th>
+        <th>Duration</th>
+        <th>Outcome</th>
+        <th>Engagement</th>
+        <th>Consistency</th>
+        <th>Effectiveness</th>
+        <th>Risk</th>
+        <th>Transcript</th>
+        <th>Recording</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+</main>
+
+<script src="../js/manager/insightCalls.js"></script>
+<script>
+function logout() {
+  localStorage.clear();
+  window.location.href = "/";
+}
+</script>
+
+</body>
+</html>

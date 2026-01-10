@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sales Dialer - WebRTC</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .btn-primary {
+        background: #4caf50;
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #45a049;
+      }
+      .btn-danger {
+        background: #f44336;
+        color: white;
+      }
+      .btn-danger:hover {
+        background: #da190b;
+      }
+      .btn-primary:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      .status {
+        padding: 10px;
+        margin-top: 15px;
+        border-radius: 5px;
+        text-align: center;
+      }
+      .status.connected {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status.calling {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .status.disconnected {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      #callTimer {
+        font-size: 24px;
+        text-align: center;
+        margin: 20px 0;
+        color: #333;
+        font-weight: bold;
+      }
+      .recording-indicator {
+        display: none;
+        color: red;
+        text-align: center;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+      .recording-indicator::before {
+        content: "🔴 ";
+        animation: blink 1s infinite;
+      }
+      @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+      }
+      .timestamp {
+        text-align: center;
+        color: #666;
+        font-size: 12px;
+        margin-top: 10px;
+        padding: 8px;
+        background: #f8f9fa;
+        border-radius: 5px;
+      }
+      .call-info {
+        display: none;
+        background: #e3f2fd;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+      }
+      .call-info p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #333;
+      }
+      .call-info strong {
+        color: #1976d2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>📞 Sales Dialer (WebRTC)</h2>
+
+      <div class="form-group">
+        <label>Your Phone (Salesperson):</label>
+        <input type="tel" id="myPhone" placeholder="+919876543210" />
+      </div>
+
+      <div class="form-group">
+        <label>Customer Phone:</label>
+        <input type="tel" id="customerPhone" placeholder="+919876543210" />
+      </div>
+
+      <button id="registerBtn" class="btn-primary" onclick="register()">
+        Register as Salesperson
+      </button>
+
+      <button id="callBtn" class="btn-primary" onclick="makeCall()" disabled>
+        Start Call
+      </button>
+
+      <button
+        id="endBtn"
+        class="btn-danger"
+        onclick="endCall()"
+        style="display: none"
+      >
+        End Call
+      </button>
+
+      <div id="recordingIndicator" class="recording-indicator">RECORDING</div>
+      <div id="status" class="status" style="display: none"></div>
+      <div id="callTimer" style="display: none">00:00</div>
+      
+      <!-- ✅ Call Info Section -->
+      <div id="callInfo" class="call-info">
+        <p><strong>Call Started:</strong> <span id="startTime">--</span></p>
+        <p><strong>Current Time:</strong> <span id="currentTime">--</span></p>
+        <p><strong>Call ID:</strong> <span id="displayCallId">--</span></p>
+      </div>
+
+      <div id="timestamp" class="timestamp"></div>
+    </div>
+
+    <audio id="remoteAudio" autoplay></audio>
+    <audio id="localAudio" muted></audio>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      let socket;
+      let peerConnection;
+      let localStream;
+      let currentCallId;
+      let callStartTime;
+      let timerInterval;
+      let clockInterval;
+      let mediaRecorder;
+      let recordedChunks = [];
+
+      const config = {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun1.l.google.com:19302" },
+        ],
+      };
+
+      // ✅ Update current time display
+      function updateCurrentTime() {
+        const now = new Date();
+        const timeString = now.toLocaleString('en-IN', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true
+        });
+        document.getElementById('timestamp').textContent = timeString;
+        
+        if (document.getElementById('callInfo').style.display !== 'none') {
+          document.getElementById('currentTime').textContent = timeString;
+        }
+      }
+
+      // Start clock
+      setInterval(updateCurrentTime, 1000);
+      updateCurrentTime();
+
+      function log(message, data = "") {
+        console.log(`[DIALER] ${message}`, data);
+      }
+
+      function updateStatus(message, type) {
+        log(message, type);
+        const statusDiv = document.getElementById("status");
+        statusDiv.textContent = message;
+        statusDiv.className = `status ${type}`;
+        statusDiv.style.display = "block";
+      }
+
+      function startTimer() {
+        callStartTime = Date.now();
+        const startDate = new Date(callStartTime);
+        
+        // ✅ Display call start time
+        const startTimeString = startDate.toLocaleString('en-IN', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true
+        });
+        
+        document.getElementById('startTime').textContent = startTimeString;
+        document.getElementById('callInfo').style.display = 'block';
+        
+        timerInterval = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
+          const minutes = Math.floor(elapsed / 60)
+            .toString()
+            .padStart(2, "0");
+          const seconds = (elapsed % 60).toString().padStart(2, "0");
+          document.getElementById(
+            "callTimer"
+          ).textContent = `${minutes}:${seconds}`;
+        }, 1000);
+        document.getElementById("callTimer").style.display = "block";
+      }
+
+      function stopTimer() {
+        clearInterval(timerInterval);
+        document.getElementById("callTimer").style.display = "none";
+        document.getElementById("callInfo").style.display = "none";
+      }
+
+      function register() {
+        const myPhone = document.getElementById("myPhone").value;
+
+        if (!myPhone) {
+          alert("Please enter your phone number");
+          return;
+        }
+
+        log("Connecting to server...");
+        updateStatus("Connecting to server...", "calling");
+
+        socket = io("http://127.0.0.1:5000", {
+          transports: ["websocket", "polling"],
+          reconnection: true,
+        });
+
+        socket.on("connect", () => {
+          log("✅ Socket connected!", socket.id);
+          updateStatus("Connected to server", "connected");
+
+          socket.emit("register", {
+            phone: myPhone,
+            userType: "salesperson",
+          });
+        });
+
+        socket.on("connect_error", (error) => {
+          log("❌ Connection error:", error);
+          updateStatus("Connection failed!", "disconnected");
+        });
+
+        socket.on("registered", (data) => {
+          log("✅ Registered:", data);
+          updateStatus("Registered! Ready to call", "connected");
+          document.getElementById("registerBtn").disabled = true;
+          document.getElementById("callBtn").disabled = false;
+        });
+
+        socket.on("call_initiated", (data) => {
+          log("📞 Call initiated:", data);
+          currentCallId = data.callId;
+          // ✅ Display Call ID
+          document.getElementById("displayCallId").textContent = currentCallId;
+        });
+
+        socket.on("webrtc_answer", async (data) => {
+          log("📥 Received answer");
+          try {
+            const answer = new RTCSessionDescription(data.answer);
+            await peerConnection.setRemoteDescription(answer);
+            updateStatus("Call connected! Recording...", "connected");
+            startTimer();
+          } catch (error) {
+            log("❌ Error:", error);
+          }
+        });
+
+        socket.on("webrtc_ice_candidate", async (data) => {
+          log("📥 Received ICE candidate");
+          try {
+            if (data.candidate && peerConnection) {
+              await peerConnection.addIceCandidate(
+                new RTCIceCandidate(data.candidate)
+              );
+            }
+          } catch (error) {
+            log("❌ ICE error:", error);
+          }
+        });
+
+        socket.on("call_ended", (data) => {
+          log("📞 Call ended:", data);
+          const endTime = new Date().toLocaleString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+          });
+          cleanup();
+          updateStatus(`Call ended at ${endTime}. Duration: ${data.duration}s`, "disconnected");
+        });
+      }
+
+      async function makeCall() {
+        const customerPhone = document.getElementById("customerPhone").value;
+        const myPhone = document.getElementById("myPhone").value;
+
+        if (!customerPhone) {
+          alert("Please enter customer phone number");
+          return;
+        }
+
+        if (!socket || !socket.connected) {
+          alert("Not connected! Please register first.");
+          return;
+        }
+
+        try {
+          log("🎤 Requesting microphone...");
+          updateStatus("Getting microphone access...", "calling");
+
+          // Get microphone
+          localStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+            },
+          });
+
+          log("✅ Got microphone");
+          document.getElementById("localAudio").srcObject = localStream;
+
+          // Start recording
+          recordedChunks = [];
+          try {
+            mediaRecorder = new MediaRecorder(localStream, {
+              mimeType: "audio/webm",
+            });
+
+            mediaRecorder.ondataavailable = (event) => {
+              if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+                log("📼 Chunk:", event.data.size, "bytes");
+              }
+            };
+
+            mediaRecorder.onstop = async () => {
+              log("📼 Recording stopped");
+              await uploadRecording();
+            };
+
+            mediaRecorder.start(1000);
+            log("🔴 Recording started");
+            document.getElementById("recordingIndicator").style.display = "block";
+          } catch (err) {
+            log("⚠️ Recording not supported, continuing without recording");
+          }
+
+          // Create peer connection
+          peerConnection = new RTCPeerConnection(config);
+          log("✅ Created peer connection");
+
+          // Add tracks
+          localStream.getTracks().forEach((track) => {
+            peerConnection.addTrack(track, localStream);
+          });
+
+          // Handle remote stream
+          peerConnection.ontrack = (event) => {
+            log("📥 Got remote stream");
+            document.getElementById("remoteAudio").srcObject = event.streams[0];
+          };
+
+          // Handle ICE candidates
+          peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+              socket.emit("webrtc_ice_candidate", {
+                callId: currentCallId,
+                candidate: event.candidate,
+              });
+            }
+          };
+
+          // Create offer
+          const offer = await peerConnection.createOffer();
+          await peerConnection.setLocalDescription(offer);
+          log("✅ Created offer");
+
+          // Initiate call
+          socket.emit("initiate_call", {
+            callerPhone: myPhone,
+            receiverPhone: customerPhone,
+            salespersonId: "SP001",
+          });
+
+          socket.once("call_initiated", (data) => {
+            currentCallId = data.callId;
+            log("📞 Call ID:", currentCallId);
+            document.getElementById("displayCallId").textContent = currentCallId;
+
+            socket.emit("webrtc_offer", {
+              callId: currentCallId,
+              offer: offer,
+            });
+
+            updateStatus("Calling...", "calling");
+            document.getElementById("callBtn").style.display = "none";
+            document.getElementById("endBtn").style.display = "block";
+          });
+        } catch (error) {
+          log("❌ Error:", error);
+          updateStatus("Failed: " + error.message, "disconnected");
+        }
+      }
+
+      async function uploadRecording() {
+        if (recordedChunks.length === 0) {
+          log("❌ No recording data");
+          return;
+        }
+
+        try {
+          const blob = new Blob(recordedChunks, { type: "audio/webm" });
+          log("📦 Blob size:", blob.size, "bytes");
+
+          const formData = new FormData();
+          formData.append("audio", blob, `call_${currentCallId}.webm`);
+          formData.append("salespersonId", "SP001");
+          formData.append("outcome", "connected");
+          formData.append("callId", currentCallId);
+
+          updateStatus("Uploading recording...", "calling");
+
+          const response = await fetch("http://127.0.0.1:5000/api/call/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await response.json();
+          log("✅ Upload response:", data);
+
+          if (data.success) {
+            updateStatus("Recording saved!", "connected");
+            alert(
+              `Call recorded!\n\nDuration: ${data.duration}s\nTranscript: ${data.transcript.substring(0, 100)}...`
+            );
+          } else {
+            updateStatus("Upload failed", "disconnected");
+          }
+        } catch (error) {
+          log("❌ Upload error:", error);
+          updateStatus("Upload failed", "disconnected");
+        }
+      }
+
+      function endCall() {
+        log("Ending call...");
+
+        // Stop recording
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+          log("🛑 Stopped recording");
+          document.getElementById("recordingIndicator").style.display = "none";
+        }
+
+        if (currentCallId && socket) {
+          socket.emit("end_call", { callId: currentCallId });
+        }
+
+        // Wait for upload before cleanup
+        setTimeout(() => {
+          cleanup();
+        }, 3000);
+      }
+
+      function cleanup() {
+        log("Cleaning up...");
+        stopTimer();
+
+        if (peerConnection) {
+          peerConnection.close();
+          peerConnection = null;
+        }
+
+        if (localStream) {
+          localStream.getTracks().forEach((track) => track.stop());
+          localStream = null;
+        }
+
+        document.getElementById("callBtn").style.display = "block";
+        document.getElementById("endBtn").style.display = "none";
+        document.getElementById("recordingIndicator").style.display = "none";
+        currentCallId = null;
+        recordedChunks = [];
+      }
+
+      log("Dialer page loaded");
+    </script>
+  </body>
+</html>

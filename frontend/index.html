@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sales Management System</title>
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="logo">✦ SalesManagementSystem</div>
+      <nav>
+        <a href="#">Solutions</a>
+        <a href="#">About</a>
+        <a href="#">Blog</a>
+        <a href="#">Support</a>
+        <button class="btn-primary" onclick="openLogin()">Login</button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>Sales calls. Tracked.<br />Optimized. Done.</h1>
+      <p>Monitor calls, assign leads, and analyze performance.</p>
+
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="openSignup()">Join us now</button>
+      </div>
+    </section>
+
+    <!-- AUTH MODAL -->
+    <div class="modal-overlay" id="authModal">
+      <div class="modal">
+        <span class="close" onclick="closeAuth()">×</span>
+
+        <!-- SIGN UP -->
+        <div id="signupBox" class="form hidden">
+          <h2>Create Account</h2>
+
+          <select id="signupRole">
+            <option value="manager">Manager</option>
+            <option value="salesperson">Salesperson</option>
+          </select>
+
+          <input id="signupEmail" type="email" placeholder="Email" />
+          <input id="signupPassword" type="password" placeholder="Password" />
+
+          <button class="btn-primary" onclick="signupUser()">
+            Create account
+          </button>
+
+          <p class="switch-text">
+            Already have an account?
+            <span onclick="showLogin()">Login</span>
+          </p>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="loginBox" class="form">
+          <h2>Welcome Back</h2>
+
+          <input id="loginEmail" type="email" placeholder="Email" />
+          <input id="loginPassword" type="password" placeholder="Password" />
+
+          <button class="btn-primary" onclick="loginUser()">Login</button>
+
+          <p class="switch-text">
+            New account?
+            <span onclick="showSignup()">Sign up</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ONLY THIS JS FILE -->
+    <script src="js/auth.js"></script>
+  </body>
+</html>

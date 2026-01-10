@@ -1,0 +1,91 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.sidebar {
+  position: fixed;
+  width: 220px;
+  height: 100vh;
+  background: #020617;
+  padding: 20px;
+}
+
+.sidebar .brand {
+  color: #a78bfa;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 10px;
+  color: #cbd5e1;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.sidebar nav a.active,
+.sidebar nav a:hover {
+  background: #6366f1;
+  color: white;
+}
+
+.main {
+  margin-left: 240px;
+  padding: 30px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logout {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.table-card {
+  margin-top: 20px;
+  background: #020617;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #1e293b;
+  vertical-align: top;
+}
+
+th {
+  color: #a78bfa;
+  font-size: 14px;
+}
+
+.score {
+  font-weight: bold;
+}
+
+.explain {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+audio {
+  width: 180px;
+}

@@ -1,0 +1,273 @@
+/* ============================= */
+/* Reset & Base                  */
+/* ============================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #e5e7eb;
+}
+
+/* ============================= */
+/* Sidebar                       */
+/* ============================= */
+.sidebar {
+  width: 240px;
+  background: linear-gradient(180deg, #020617, #020617);
+  padding: 28px 22px;
+  border-right: 1px solid #1e293b;
+}
+
+.brand {
+  color: #38bdf8;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 35px;
+}
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  color: #cbd5f5;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  background: #1e293b;
+  color: #38bdf8;
+}
+
+/* ============================= */
+/* Main Layout                   */
+/* ============================= */
+.main {
+  flex: 1;
+  padding: 36px 48px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================= */
+/* Topbar                        */
+/* ============================= */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.topbar h1 {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.logout {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ============================= */
+/* Employee Section              */
+/* ============================= */
+.employee-section {
+  max-width: 1100px;
+}
+
+/* Header row */
+.employee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.employee-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Search */
+.employee-search input {
+  width: 240px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.employee-search input::placeholder {
+  color: #64748b;
+}
+
+.employee-search input:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+/* ============================= */
+/* Employee Cards                */
+/* ============================= */
+#employeeCards {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Individual agent */
+.employee-row {
+  background: linear-gradient(180deg, #020617, #020617);
+  border-radius: 14px;
+  padding: 22px 26px;
+  border: 1px solid #1e293b;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+/* Top summary */
+.employee-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.employee-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.employee-icon {
+  font-size: 40px;
+  opacity: 0.8;
+}
+
+.employee-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.employee-basic {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ============================= */
+/* Metrics                       */
+/* ============================= */
+.employee-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 26px;
+}
+
+.metric {
+  font-size: 13px;
+}
+
+.metric-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: #cbd5f5;
+}
+
+.metric-bar {
+  height: 8px;
+  background: #1e293b;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.metric-fill {
+  height: 100%;
+  border-radius: 6px;
+}
+
+/* Colors */
+.good {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+.ok {
+  background: linear-gradient(90deg, #facc15, #fde047);
+}
+
+.bad {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+/* ============================= */
+/* Responsive                    */
+/* ============================= */
+@media (max-width: 1200px) {
+  .employee-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .main {
+    padding: 24px;
+  }
+
+  .employee-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart-card {
+  background: #020617;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.employee-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.employee-card {
+  background: #020617;
+  padding: 18px;
+  border-radius: 12px;
+}
+
+.employee-card .score {
+  color: #22c55e;
+  font-weight: bold;
+}

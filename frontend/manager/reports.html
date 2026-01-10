@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manager Reports</title>
+  <link rel="stylesheet" href="../css/manager.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h2>Analytics & Insights</h2>
+  <a href="dashboard.html" style="color:white">← Back</a>
+</header>
+
+<div class="cards">
+  <div class="card">
+    <h3>Total Calls</h3>
+    <p id="totalCalls">0</p>
+  </div>
+
+  <div class="card">
+    <h3>Successful Calls</h3>
+    <p id="successfulCalls">0</p>
+  </div>
+
+  <div class="card">
+    <h3>Conversion Rate</h3>
+    <p id="conversionRate">0%</p>
+  </div>
+</div>
+
+<section class="table-section">
+  <h3>Salesperson-wise Performance</h3>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Salesperson</th>
+        <th>Total Calls</th>
+        <th>Avg Duration (sec)</th>
+        <th>Conversions</th>
+      </tr>
+    </thead>
+    <tbody id="reportTable"></tbody>
+  </table>
+</section>
+
+<script src="../js/api.js"></script>
+<script>
+async function loadReports() {
+  const data = await apiRequest("/analytics/manager-summary");
+
+  document.getElementById("totalCalls").innerText = data.totalCalls;
+  document.getElementById("successfulCalls").innerText = data.successfulCalls;
+  document.getElementById("conversionRate").innerText = data.conversionRate + "%";
+
+  const tbody = document.getElementById("reportTable");
+
+  data.salespersons.forEach(sp => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${sp.name}</td>
+      <td>${sp.totalCalls}</td>
+      <td>${sp.avgDuration}</td>
+      <td>${sp.conversions}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+loadReports();
+</script>
+
+</body>
+</html>
