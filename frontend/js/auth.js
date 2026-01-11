@@ -1,6 +1,18 @@
-const API = "/api/auth";
+/* ============================= */
+/* API CONFIG (LOCAL + PROD)     */
+/* ============================= */
 
-// ---------- MODAL LOGIC ----------
+const API =
+  window.location.hostname === "localhost"
+    ? "http://127.0.0.1:5000/api/auth"
+    : "https://salesms-backend.onrender.com/api/auth";
+// ⚠️ Make sure this backend URL ACTUALLY works in browser
+
+
+/* ============================= */
+/* MODAL LOGIC                   */
+/* ============================= */
+
 const modal = document.getElementById("authModal");
 const signupBox = document.getElementById("signupBox");
 const loginBox = document.getElementById("loginBox");
@@ -19,7 +31,11 @@ function closeAuth() {
   modal.classList.remove("active");
 }
 
-// ---------- SWITCH FORMS ----------
+
+/* ============================= */
+/* SWITCH FORMS                  */
+/* ============================= */
+
 function showSignup() {
   signupBox.classList.remove("hidden");
   loginBox.classList.add("hidden");
@@ -30,11 +46,15 @@ function showLogin() {
   signupBox.classList.add("hidden");
 }
 
-// ---------- SIGNUP ----------
+
+/* ============================= */
+/* SIGNUP                        */
+/* ============================= */
+
 async function signupUser() {
   const role = document.getElementById("signupRole").value;
-  const email = document.getElementById("signupEmail").value;
-  const password = document.getElementById("signupPassword").value;
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value.trim();
 
   if (!email || !password) {
     alert("Please fill all fields");
@@ -54,18 +74,29 @@ async function signupUser() {
     });
 
     const data = await res.json();
-    alert(data.message || "Signup successful");
 
-    if (res.ok) showLogin();
+    if (!res.ok) {
+      alert(data.message || "Signup failed");
+      return;
+    }
+
+    alert("Signup successful. Please login.");
+    showLogin();
+
   } catch (err) {
-    alert("Server error. Please try again.");
+    console.error(err);
+    alert("Backend unreachable");
   }
 }
 
-// ---------- LOGIN ----------
+
+/* ============================= */
+/* LOGIN                         */
+/* ============================= */
+
 async function loginUser() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
 
   if (!email || !password) {
     alert("Please fill all fields");
@@ -80,30 +111,38 @@ async function loginUser() {
     });
 
     const data = await res.json();
-    console.log("LOGIN RESPONSE:", data); // 🔍 DEBUG
+    console.log("LOGIN RESPONSE:", data);
 
     if (!res.ok) {
       alert(data.message || "Login failed");
       return;
     }
 
-    // ✅ STORE AUTH INFO
-    if (data.token) localStorage.setItem("token", data.token);
-    if (data.role) localStorage.setItem("role", data.role);
+    // ==============================
+    // STORE AUTH DATA
+    // ==============================
 
-    // ✅ NORMALIZE ROLE
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.role);
+
     const role = data.role?.toLowerCase();
 
+    // ==============================
+    // GITHUB PAGES SAFE REDIRECTS
+    // (NO LEADING SLASH)
+    // ==============================
+
     if (role === "manager") {
-      window.location.href = "/manager/dashboard.html";
+      window.location.href = "manager/dashboard.html";
     } else if (role === "salesperson") {
-      window.location.href = "/salesperson/dashboard.html";
+      window.location.href = "salesperson/dashboard.html";
     } else {
-      alert("Login successful but role missing or invalid");
+      alert("Invalid role received from server");
       console.error("Invalid role:", data.role);
     }
 
   } catch (err) {
-    alert("Unable to connect to server");
+    console.error(err);
+    alert("Backend unreachable");
   }
 }
