@@ -13,7 +13,7 @@ from routes.call_routes import call_bp
 from routes.followup_routes import followup_bp
 from routes.lead_routes import lead_bp
 from routes.analytics_routes import analytics_bp
-from routes.call_insights_routes import call_insights_bp  # ✅ ADD THIS
+from routes.call_insights_routes import call_insights_bp
 
 # ---------------- WEBRTC ----------------
 from controllers.webrtc_controller import (
@@ -29,21 +29,29 @@ from controllers.webrtc_controller import (
 
 # ---------------- PATHS ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
+UPLOADS_DIR = os.path.join(BASE_DIR, "uploads")
 
 # ---------------- APP INIT ----------------
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
 
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+# ✅ CORS (frontend hosted separately)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+# ✅ Socket.IO (Render-safe)
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    async_mode="eventlet"
+)
 
 # =====================================================
-# ✅ API ROUTES (REGISTER FIRST — VERY IMPORTANT)
+# ✅ API ROUTES (REGISTER FIRST)
 # =====================================================
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(manager_bp, url_prefix="/api/manager")
+app.register_blueprint(call_insights_bp, url_prefix="/api/manager")
 app.register_blueprint(call_bp, url_prefix="/api/call")
-app.register_blueprint(call_insights_bp, url_prefix="/api/manager")  # ✅ REQUIRED
 app.register_blueprint(analytics_bp, url_prefix="/api/analytics")
 app.register_blueprint(followup_bp, url_prefix="/api/followup")
 app.register_blueprint(lead_bp, url_prefix="/api/lead")
@@ -61,37 +69,48 @@ socketio.on_event("webrtc_ice_candidate", webrtc_ice_candidate)
 socketio.on_event("end_call", end_call)
 
 # =====================================================
-# 🌐 FRONTEND ROUTES (REGISTER LAST)
+# 🌐 FRONTEND FILE SERVING (NO templates/static)
 # =====================================================
+
 @app.route("/")
 def home():
     return send_from_directory(FRONTEND_DIR, "index.html")
 
-@app.route("/manager/<page>")
+@app.route("/manager/<path:page>")
 def serve_manager_pages(page):
-    manager_dir = os.path.join(FRONTEND_DIR, "manager")
-    file_path = os.path.join(manager_dir, page)
-
-    if not os.path.isfile(file_path):
+    path = os.path.join(FRONTEND_DIR, "manager", page)
+    if not os.path.isfile(path):
         abort(404)
+    return send_from_directory(os.path.join(FRONTEND_DIR, "manager"), page)
 
-    return send_from_directory(manager_dir, page)
-
-@app.route("/<path:filename>")
-def serve_static(filename):
-    file_path = os.path.join(FRONTEND_DIR, filename)
-
-    if not os.path.isfile(file_path):
+@app.route("/salesperson/<path:page>")
+def serve_salesperson_pages(page):
+    path = os.path.join(FRONTEND_DIR, "salesperson", page)
+    if not os.path.isfile(path):
         abort(404)
+    return send_from_directory(os.path.join(FRONTEND_DIR, "salesperson"), page)
 
-    return send_from_directory(FRONTEND_DIR, filename)
 @app.route("/uploads/<path:filename>")
 def serve_uploads(filename):
-    upload_dir = os.path.join(BASE_DIR, "uploads")
-    return send_from_directory(upload_dir, filename)
+    path = os.path.join(UPLOADS_DIR, filename)
+    if not os.path.isfile(path):
+        abort(404)
+    return send_from_directory(UPLOADS_DIR, filename)
+
+@app.route("/<path:filename>")
+def serve_static_files(filename):
+    path = os.path.join(FRONTEND_DIR, filename)
+    if not os.path.isfile(path):
+        abort(404)
+    return send_from_directory(FRONTEND_DIR, filename)
 
 # =====================================================
 # 🚀 RUN
 # =====================================================
 if __name__ == "__main__":
-    socketio.run(app, debug=True, host="127.0.0.1", port=5000)
+    socketio.run(
+        app,
+        host="0.0.0.0",   # ✅ REQUIRED for deployment
+        port=int(os.environ.get("PORT", 5000)),
+        debug=True
+    )
