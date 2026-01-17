@@ -1,18 +1,4 @@
-/* ============================= */
-/* API CONFIG (LOCAL + PROD)     */
-/* ============================= */
-
-const API =
-  window.location.hostname === "localhost"
-    ? "http://127.0.0.1:5000/api/auth"
-    : "https://salesms-backend.onrender.com/api/auth";
-// ⚠️ Make sure this backend URL ACTUALLY works in browser
-
-
-/* ============================= */
-/* MODAL LOGIC                   */
-/* ============================= */
-
+// ---------- MODAL LOGIC ----------
 const modal = document.getElementById("authModal");
 const signupBox = document.getElementById("signupBox");
 const loginBox = document.getElementById("loginBox");
@@ -31,11 +17,7 @@ function closeAuth() {
   modal.classList.remove("active");
 }
 
-
-/* ============================= */
-/* SWITCH FORMS                  */
-/* ============================= */
-
+// ---------- SWITCH FORMS ----------
 function showSignup() {
   signupBox.classList.remove("hidden");
   loginBox.classList.add("hidden");
@@ -46,15 +28,11 @@ function showLogin() {
   signupBox.classList.add("hidden");
 }
 
-
-/* ============================= */
-/* SIGNUP                        */
-/* ============================= */
-
+// ---------- SIGNUP ----------
 async function signupUser() {
   const role = document.getElementById("signupRole").value;
-  const email = document.getElementById("signupEmail").value.trim();
-  const password = document.getElementById("signupPassword").value.trim();
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
 
   if (!email || !password) {
     alert("Please fill all fields");
@@ -63,40 +41,22 @@ async function signupUser() {
 
   const endpoint =
     role === "manager"
-      ? "/register/manager"
-      : "/register/salesperson";
+      ? "/api/auth/register/manager"
+      : "/api/auth/register/salesperson";
 
   try {
-    const res = await fetch(API + endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Signup failed");
-      return;
-    }
-
-    alert("Signup successful. Please login.");
+    const data = await apiRequest(endpoint, "POST", { email, password });
+    alert(data.message || "Signup successful");
     showLogin();
-
   } catch (err) {
-    console.error(err);
-    alert("Backend unreachable");
+    alert(err.message || "Signup failed");
   }
 }
 
-
-/* ============================= */
-/* LOGIN                         */
-/* ============================= */
-
+// ---------- LOGIN ----------
 async function loginUser() {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
   if (!email || !password) {
     alert("Please fill all fields");
@@ -104,45 +64,28 @@ async function loginUser() {
   }
 
   try {
-    const res = await fetch(API + "/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+    const data = await apiRequest("/api/auth/login", "POST", {
+      email,
+      password
     });
 
-    const data = await res.json();
     console.log("LOGIN RESPONSE:", data);
 
-    if (!res.ok) {
-      alert(data.message || "Login failed");
-      return;
-    }
-
-    // ==============================
-    // STORE AUTH DATA
-    // ==============================
-
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("role", data.role);
+    // ✅ STORE AUTH INFO
+    if (data.token) localStorage.setItem("token", data.token);
+    if (data.role) localStorage.setItem("role", data.role);
 
     const role = data.role?.toLowerCase();
 
-    // ==============================
-    // GITHUB PAGES SAFE REDIRECTS
-    // (NO LEADING SLASH)
-    // ==============================
-
     if (role === "manager") {
-      window.location.href = "manager/dashboard.html";
+      window.location.href = "/manager/dashboard.html";
     } else if (role === "salesperson") {
-      window.location.href = "salesperson/dashboard.html";
+      window.location.href = "/salesperson/dashboard.html";
     } else {
-      alert("Invalid role received from server");
-      console.error("Invalid role:", data.role);
+      alert("Invalid role received");
     }
-
   } catch (err) {
-    console.error(err);
     alert("Backend unreachable");
+    console.error(err);
   }
 }
