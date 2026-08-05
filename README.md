@@ -1,91 +1,78 @@
-📞 Sales Management System (SalesMS)
+# 📞 Sales Management System (SalesMS)
+
 SalesMS is a full-stack Sales and Call Management System designed to streamline sales operations by combining real-time calling, AI-based call analysis, manager dashboards, and secure data handling.
 
 The system focuses on performance monitoring, lead management, and cybersecurity, ensuring that sensitive call data is processed, stored, and displayed in a secure and controlled manner.
 
-🎯 Objectives of the Project
+---
 
-Enable managers to monitor sales calls and agent performance
+# 🎯 Objectives of the Project
 
-Provide AI-generated insights from call recordings
+- Enable managers to monitor sales calls and agent performance.
+- Provide AI-generated insights from call recordings.
+- Support real-time calling and signaling.
+- Ensure strong cybersecurity and data protection.
+- Build a scalable, modular, industry-style architecture.
 
-Support real-time calling and signaling
+---
 
-Ensure strong cybersecurity and data protection
+# 🚀 Key Features
 
-Build a scalable, modular, industry-style architecture
+## 👨‍💼 Manager Features
 
-🚀 Key Features
-👨‍💼 Manager Features
+- 📊 Call Insights dashboard with AI metrics
+- 👥 Agent performance tracking
+- 📝 Lead assignment and monitoring
+- ⚠️ Risk assessment per call
+- 📜 Call transcripts and summaries
 
-📊 Call Insights dashboard with AI metrics
+## 🎧 Calling System
 
-👥 Agent performance tracking
+- 📞 Real-time call initiation and termination
+- 🔁 WebRTC-based signaling
+- ☎️ Twilio integration for call handling
+- 🎙️ Secure call recording upload
 
-📝 Lead assignment and monitoring
+## 🧠 AI & Analytics
 
-⚠️ Risk assessment per call
+- Speech-to-text transcription using Whisper
+- Engagement, effectiveness, and risk analysis
+- Structured JSON-based insights
 
-📜 Call transcripts and summaries
+## 🔐 Security
 
-🎧 Calling System
+- Token-based authentication
+- Secure API-only data access
+- Backend-only file storage
+- Protected real-time communication
 
-📞 Real-time call initiation and termination
+---
 
-🔁 WebRTC-based signaling
+# 🏗️ Technology Stack
 
-☎️ Twilio integration for call handling
+## Frontend
 
-🎙️ Secure call recording upload
+- HTML5
+- CSS3 (Dark Mode UI)
+- Vanilla JavaScript
+- Font Awesome
 
-🧠 AI & Analytics
+## Backend
 
-Speech-to-text transcription using Whisper
+- Python (Flask)
+- Flask Blueprints
+- Flask-SocketIO
+- WebRTC
+- Twilio API
+- Whisper (Speech-to-Text)
+- python-dotenv
+- JSON-based storage (DB-ready)
 
-Engagement, effectiveness, and risk analysis
+---
 
-Structured JSON-based insights
+# 📁 Project Structure
 
-🔐 Security
-
-Token-based authentication
-
-Secure API-only data access
-
-Backend-only file storage
-
-Protected real-time communication
-
-🏗️ Technology Stack
-Frontend
-
-HTML5
-
-CSS3 (Dark Mode UI)
-
-Vanilla JavaScript
-
-Font Awesome
-
-Backend
-
-Python (Flask)
-
-Flask Blueprints
-
-Flask-SocketIO
-
-WebRTC
-
-Twilio API
-
-Whisper (Speech-to-Text)
-
-dotenv
-
-JSON-based storage (DB-ready)
-
-📁 Project Structure
+```text
 SalesManagementSystem/
 │
 ├── backend/
@@ -95,14 +82,17 @@ SalesManagementSystem/
 │   │   ├── call_routes.py
 │   │   ├── manager_routes.py
 │   │   └── analytics_routes.py
+│   │
 │   ├── controllers/
 │   │   ├── call_controller.py
 │   │   ├── call_logs_controller.py
 │   │   ├── call_upload_controller.py
 │   │   ├── webrtc_controller.py
 │   │   └── twilio_controller.py
+│   │
 │   ├── utils/
 │   │   └── transcription.py
+│   │
 │   └── data/
 │       └── call_logs/
 │
@@ -112,221 +102,302 @@ SalesManagementSystem/
 │   │   ├── insight-calls.html
 │   │   ├── dashboard.css
 │   │   └── insight-calls.css
+│   │
 │   ├── js/
 │   │   └── manager/
 │   │       └── insightCalls.js
+│   │
 │   └── index.html
 │
 ├── venv/
 ├── .env
 └── README.md
+```
 
-⚙️ Installation & Setup
-Backend Setup (Python 3.10 Recommended)
+---
+
+# ⚙️ Installation & Setup
+
+## Backend Setup (Python 3.10 Recommended)
+
+```bash
 cd backend
+
 python -m venv venv
+
 venv\Scripts\activate
+
 pip install flask flask-cors flask-socketio python-dotenv eventlet torch openai-whisper twilio
+
 python app.py
+```
 
+### Server runs at:
 
-Server runs at:
-
+```
 http://127.0.0.1:5000
+```
 
-🌐 Frontend Pages
+---
 
-Manager Dashboard
+# 🌐 Frontend Pages
 
+### Manager Dashboard
+
+```
 /manager/dashboard.html
+```
 
+### Call Insights Page
 
-Call Insights Page
-
+```
 /manager/insight-calls.html
+```
 
-🔗 Key API Endpoint
-GET /api/call/manager/call-logs
+---
 
+# 🔗 Key API Endpoint
 
-Returns AI-processed call data including metrics, risk levels, and transcripts.
+### GET
 
-🔐 Cybersecurity & Data Protection During Calls
+```
+/api/call/manager/call-logs
+```
 
-SalesMS follows security-by-design principles to ensure the confidentiality, integrity, and availability of call data.
+Returns AI-processed call data including:
 
-🛡️ Secure Architecture
+- Call metrics
+- Risk levels
+- Transcripts
+- AI-generated insights
 
-Frontend handles display only
+---
 
-Backend controls data processing and storage
+# 🔐 Cybersecurity & Data Protection During Calls
 
-No direct access to server files from the browser
+SalesMS follows **security-by-design** principles to ensure the confidentiality, integrity, and availability of call data.
 
-🔑 Authentication & Authorization
+## 🛡️ Secure Architecture
 
-Token-based authentication for protected pages
+- Frontend handles display only.
+- Backend controls data processing and storage.
+- No direct access to server files from the browser.
 
-Unauthorized users are redirected or blocked
+## 🔑 Authentication & Authorization
 
-APIs validate access before returning sensitive data
+- Token-based authentication for protected pages.
+- Unauthorized users are redirected or blocked.
+- APIs validate access before returning sensitive data.
 
-🔒 Secure Calling (Twilio + WebRTC)
+## 🔒 Secure Calling (Twilio + WebRTC)
 
-Twilio handles call routing securely
+- Twilio handles call routing securely.
+- WebRTC manages real-time signaling.
+- Socket.IO events are authenticated.
+- Prevents call hijacking and spoofing.
 
-WebRTC manages real-time signaling
+## 🎙️ Secure Recording & Upload
 
-Socket.IO events are authenticated
+- Call recordings uploaded via backend APIs only.
+- Stored in protected backend directories.
+- Not exposed through public URLs.
 
-Prevents call hijacking and spoofing
+## 🧠 Secure AI Processing
 
-🎙️ Secure Recording & Upload
+- Audio processed server-side.
+- Transcription and analysis isolated from the frontend.
+- Only summarized insights returned to the UI.
 
-Call recordings uploaded via backend APIs only
+---
 
-Stored in protected backend directories
+# 🚫 Attack Mitigation
 
-Not exposed via public URLs
+| Threat | Protection |
+|---------|------------|
+| Unauthorized access | Token-based authentication |
+| File leakage | Backend-only storage |
+| Call hijacking | Authenticated signaling |
+| Data tampering | API-only writes |
+| XSS | Escaped transcript rendering |
 
-🧠 Secure AI Processing
+---
 
-Audio processed server-side
-
-Transcription and analysis isolated from frontend
-
-Only summarized insights returned to the UI
-
-🚫 Attack Mitigation
-Threat	Protection
-Unauthorized access	Token-based authentication
-File leakage	Backend-only storage
-Call hijacking	Authenticated signaling
-Data tampering	API-only writes
-XSS	Escaped transcript rendering
-👥 Team Workflow & Role Distribution
+# 👥 Team Workflow & Role Distribution
 
 The project followed a modular, role-based workflow, allowing parallel development and secure integration.
 
-🎨 Frontend Team
-👤 Karthik — UI/UX & Dashboard Design
+## 🎨 Frontend Team
 
-Designed dark-mode dashboard layout
+### 👤 Karthik — UI/UX & Dashboard Design
 
-Built sidebar navigation and tables
+- Designed dark-mode dashboard layout
+- Built sidebar navigation and tables
+- Ensured UI consistency and responsiveness
 
-Ensured UI consistency and responsiveness
+**Workflow**
 
-Flow:
-Design → Layout → Styling → Review
+```
+Design
+    ↓
+Layout
+    ↓
+Styling
+    ↓
+Review
+```
 
-👤 Keshav — Frontend Logic & API Integration
+### 👤 Keshav — Frontend Logic & API Integration
 
-Implemented frontend JavaScript
+- Implemented frontend JavaScript
+- Integrated backend APIs
+- Handled authentication guards and data rendering
 
-Integrated backend APIs
+**Workflow**
 
-Handled authentication guards and data rendering
+```
+API Contract
+      ↓
+Fetch
+      ↓
+Render
+      ↓
+Debug
+```
 
-Flow:
-API Contract → Fetch → Render → Debug
+---
 
-⚙️ Backend Team
-👤 Chaitanya — Core Backend Architecture
+## ⚙️ Backend Team
 
-Designed Flask architecture
+### 👤 Chaitanya — Core Backend Architecture
 
-Implemented Blueprints and REST APIs
+- Designed Flask architecture
+- Implemented Blueprints and REST APIs
+- Managed routing, CORS, and API structure
 
-Managed routing, CORS, and API structure
+**Workflow**
 
-Flow:
-Architecture → Routing → Controllers → Testing
+```
+Architecture
+      ↓
+Routing
+      ↓
+Controllers
+      ↓
+Testing
+```
 
-👤 Dhruv — AI Processing & Call Analytics
+### 👤 Dhruv — AI Processing & Call Analytics
 
-Implemented Whisper transcription
+- Implemented Whisper transcription
+- Designed call analytics metrics
+- Processed recordings into structured insights
 
-Designed call analytics metrics
+**Workflow**
 
-Processed recordings into structured insights
+```
+Audio
+   ↓
+Transcription
+      ↓
+Analysis
+      ↓
+JSON Output
+```
 
-Flow:
-Audio → Transcription → Analysis → JSON Output
+---
 
-🔗 Integration, Calling & Security Lead
-👤 Parit — Twilio, WebRTC, Integration & Cybersecurity
+## 🔗 Integration, Calling & Security Lead
 
-Primary Responsibilities:
+### 👤 Parit — Twilio, WebRTC, Integration & Cybersecurity
 
-Implemented Twilio-based calling system
+**Primary Responsibilities**
 
-Integrated WebRTC signaling with Socket.IO
+- Implemented Twilio-based calling system
+- Integrated WebRTC signaling with Socket.IO
+- Managed end-to-end call lifecycle
+- Integrated all backend modules
+- Enforced cybersecurity across the system
 
-Managed end-to-end call lifecycle
+**Workflow**
 
-Integrated all backend modules
+```
+Calling System
+       ↓
+Integration
+       ↓
+Security Validation
+       ↓
+Deployment Testing
+```
 
-Enforced cybersecurity across the system
+---
 
-Flow:
-Calling System → Integration → Security Validation → Deployment Testing
+# 🔄 End-to-End System Flow
 
-🔄 End-to-End System Flow
+```text
 UI Design (Karthik)
-      ↓
+        ↓
 Frontend Logic & API Calls (Keshav)
-      ↓
+        ↓
 REST APIs & Routing (Chaitanya)
-      ↓
+        ↓
 Calling System (Twilio + WebRTC) (Parit)
-      ↓
+        ↓
 AI Transcription & Analysis (Dhruv)
-      ↓
+        ↓
 Secure Storage & Integration (Parit)
-      ↓
+        ↓
 Insights Dashboard (Karthik + Keshav)
+```
 
-🚀 Future Scope & Advanced Features
+---
 
-1️⃣ ML-Based Behavioral Modeling
+# 🚀 Future Scope & Advanced Features
+
+### 1️⃣ ML-Based Behavioral Modeling
+
 Adaptive models learn normal behavior and detect subtle deviations.
 
-2️⃣ Speech & NLP Intelligence
+### 2️⃣ Speech & NLP Intelligence
+
 Transcript analysis for keyword relevance, objection handling, and coaching.
 
-3️⃣ Predictive Follow-Up & Conversion Forecasting
+### 3️⃣ Predictive Follow-Up & Conversion Forecasting
+
 Prioritize leads using behavioral patterns.
 
-4️⃣ Organization-Level Risk Dashboard
+### 4️⃣ Organization-Level Risk Dashboard
+
 Team-level and regional behavior analysis.
 
-5️⃣ Policy-Driven Automated Interventions
+### 5️⃣ Policy-Driven Automated Interventions
+
 Automated reviews, coaching, and restrictions.
 
-6️⃣ CRM & Enterprise Integration
+### 6️⃣ CRM & Enterprise Integration
+
 Link call behavior with revenue outcomes.
 
-7️⃣ Broader Cybersecurity Applications
-Applicable to finance, healthcare, and support systems.
+### 7️⃣ Broader Cybersecurity Applications
 
-📌 Conclusion
+Applicable to finance, healthcare, and customer support systems.
+
+---
+
+# 📌 Conclusion
 
 SalesMS demonstrates a secure, scalable, and real-world sales intelligence system by combining:
 
-Real-time calling
-
-AI-driven analytics
-
-Modular backend architecture
-
-Strong cybersecurity practices
-
-Clear team collaboration
+- Real-time calling
+- AI-driven analytics
+- Modular backend architecture
+- Strong cybersecurity practices
+- Clear team collaboration
 
 The project reflects industry-standard design principles suitable for enterprise-grade applications.
 
-📜 License
+---
 
-This project is intended for academic and educational use.
-It may be extended or adapted for future enhancements.
+# 📜 License
+
+This project is intended for academic and educational use. It may be extended or adapted for future enhancements.
