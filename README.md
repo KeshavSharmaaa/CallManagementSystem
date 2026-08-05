@@ -1,5 +1,4 @@
 📞 Sales Management System (SalesMS)
-
 SalesMS is a full-stack Sales and Call Management System designed to streamline sales operations by combining real-time calling, AI-based call analysis, manager dashboards, and secure data handling.
 
 The system focuses on performance monitoring, lead management, and cybersecurity, ensuring that sensitive call data is processed, stored, and displayed in a secure and controlled manner.
